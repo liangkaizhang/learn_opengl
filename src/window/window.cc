@@ -1,4 +1,4 @@
-#include "renderer/window.h"
+#include "window/window.h"
 
 namespace ogl {
 

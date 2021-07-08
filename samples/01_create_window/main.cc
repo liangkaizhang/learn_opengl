@@ -1,4 +1,4 @@
-#include "renderer/glfw_window.h"
+#include "window/glfw_window.h"
 
 #include <glog/logging.h>
 

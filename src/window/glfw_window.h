@@ -1,7 +1,7 @@
-#ifndef RENDERER_GLFW_WINDOW_H_
-#define RENDERER_GLFW_WINDOW_H_
+#ifndef WINDOW_GLFW_WINDOW_H_
+#define WINDOW_GLFW_WINDOW_H_
 
-#include "renderer/window.h"
+#include "window/window.h"
 
 #include <string>
 
@@ -30,4 +30,4 @@ class GlfwWindow : public Window {
 
 }  // namespace ogl
 
-#endif  // RENDERER_GLFW_WINDOW_H_
+#endif  // WINDOW_GLFW_WINDOW_H_

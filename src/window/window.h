@@ -1,5 +1,5 @@
-#ifndef RENDERER_WINDOW_H_
-#define RENDERER_WINDOW_H_
+#ifndef WINDOW_WINDOW_H_
+#define WINDOW_WINDOW_H_
 
 #include <string>
 #include <functional>
@@ -46,4 +46,4 @@ std::unique_ptr<Window> GetWindow();
 
 }  // namespace ogl
 
-#endif  // RENDERER_WINDOW_H_
+#endif  // WINDOW_WINDOW_H_
