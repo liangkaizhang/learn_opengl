@@ -13,13 +13,16 @@ absl::Status GlfwWindow::Create(const WindowOptions& opts) {
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 	// Open a window and create its OpenGL context
 	window_ = glfwCreateWindow(width_, height_, opts.title.c_str(), nullptr, nullptr);
     CHECK(window_) << "Failed to open GLFW window";
     // Init glfw.
     glfwMakeContextCurrent(window_);
+    // glfwSetFramebufferSizeCallback(window_, framebuffer_size_callback);
     CHECK_EQ(glewInit(), GLEW_OK) << "Failed to initialize GLEW.";
     return absl::OkStatus();
 }
@@ -36,6 +39,7 @@ bool GlfwWindow::RunOnce() {
         glfwWindowShouldClose(window_)) {
             return false;
     }
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Run render callback.

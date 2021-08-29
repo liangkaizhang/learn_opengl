@@ -12,8 +12,8 @@ int main() {
     opts.height = 256;
     opts.width = 256;
     opts.title = "Hello Window!";
-    window.SetOnRenderCallback([]() { return DrawZimaBlue(); });
     CHECK(window.Create(opts).ok());
+    window.SetOnRenderCallback([]() { return DrawZimaBlue(); });
     window.Run();
     // LOG(INFO) << glGetString(GL_VERSION);
     return 0;

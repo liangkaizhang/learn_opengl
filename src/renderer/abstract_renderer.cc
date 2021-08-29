@@ -5,7 +5,7 @@ namespace ogl {
 void AbstractRenderer::Render() const {
     glUseProgram(program_);
     glBindVertexArray(vao_);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLE_STRIP, num_indices_, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
