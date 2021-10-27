@@ -34,7 +34,7 @@ class ShaderProgram {
       const std::string& vertex_shader_source,
       const std::string& fragment_shader_source);
     void Use() const;
-    GLuint GetAttributeLocation(const std::string& attribute_name) const;
+    GLuint GetAttribLocation(const std::string& attribute_name) const;
   private:
     GLuint program_ ;
 };

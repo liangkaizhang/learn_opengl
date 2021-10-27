@@ -64,7 +64,7 @@ absl::Status ShaderProgram::AttachShaders(
     return absl::OkStatus();
 }
 
-GLuint ShaderProgram::GetAttributeLocation(const std::string& attribute_name) const {
+GLuint ShaderProgram::GetAttribLocation(const std::string& attribute_name) const {
     return glGetAttribLocation(program_, attribute_name.c_str());
 }
 
