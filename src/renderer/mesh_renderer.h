@@ -15,6 +15,9 @@ class MeshRender : public AbstractRenderer {
         const std::string& vertex_shader_source,
         const std::string& fragment_shader_source,
         const ColoredMesh& mesh);
+
+    void SetProjection(const Eigen::Matrix4f& projection);
+    void SetModelView(const Eigen::Matrix4f model_view);
   private:
     absl::Status Init(
         const std::string& vertex_shader_source,

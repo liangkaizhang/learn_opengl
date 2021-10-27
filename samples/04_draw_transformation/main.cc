@@ -2,43 +2,49 @@
 #include <string>
 
 #include "window/glfw_window.h"
-#include "renderer/texture_renderer.h"
+#include "renderer/mesh_renderer.h"
 
 
 namespace ogl {
+namespace {
+using Eigen::AngleAxisf;
+using Eigen::Vector3f;
+using Eigen::Matrix4f;
+using Eigen::Matrix3f;
+}
+
 
 const std::string kVertexShaderSource ="#version 330 core\n"
     "layout (location = 0) in vec3 a_position;\n"
-    "layout (location = 1) in vec3 a_texcoord;\n"
-    "out vec2 texcoord;\n"
-    "uniform mat4 mvp;\n"
+    "layout (location = 1) in vec3 a_color;\n"
+    "out vec3 vertex_color;\n"
+    "uniform mat4 model_view;\n"
     "void main()\n"
     "{\n"
-    "   gl_Position = mvp * vec4(a_position, 1.0);\n"
-    "   texcoord = vec2(a_texcoord.x, 1 - a_texcoord.y);\n"
+    "   gl_Position = model_view * vec4(a_position, 1.0);\n"
+    "   vertex_color = a_color;\n"
     "}\0";
 
 const std::string kFragmentShaderSource = "#version 330 core\n"
     "out vec4 frag_color;\n"
-    "in vec2 texcoord;\n"
-    "uniform sampler2D u_texture;\n"
+    "in vec3 vertex_color;\n"
     "void main()\n"
     "{\n"
-    "   frag_color = texture(u_texture, texcoord);\n"
+    "   frag_color = vec4(vertex_color, 1.0f);\n"
     "}\n\0";
 
 const std::vector<float> kPositions = {
-    -1.0f, -1.0f, 0.0f,  // bottom left
-     1.0f, -1.0f, 0.0f,  // bottom right
-    -1.0f,  1.0f, 0.0f,  // top  left 
-     1.0f,  1.0f, 0.0f,  // top  right
+    -0.5f, -0.5f, 0.0f,  // bottom left
+     0.5f, -0.5f, 0.0f,  // bottom right
+    -0.5f,  0.5f, 0.0f,  // top  left 
+     0.5f,  0.5f, 0.0f,  // top  right
 };
 
-const std::vector<float> kTexCoords = {
-    0.0f, 0.0f,  // bottom left
-    1.0f, 0.0f,  // bottom right
-    0.0f, 1.0f,  // top  left 
-    1.0f, 1.0f,  // top  right
+const std::vector<float> kColors = {
+    1.0f, 0.0f, 0.0f,  // red 
+    0.0f, 1.0f, 0.0f,  // green 
+    0.0f, 0.0f, 1.0f,  // blue 
+    0.0f, 1.0f, 1.0f,  // yellow 
 };
 
 const std::vector<uint32_t> kIndices = {
@@ -46,30 +52,47 @@ const std::vector<uint32_t> kIndices = {
     1, 2, 3,
 };
 
+class RenderHelper {
+  public:
+    void Init(const std::string& vertex_shader_source,
+              const std::string& fragment_shader_source,
+              const ColoredMesh& mesh, float speed) {
+        renderer_=
+            MeshRender::Create(vertex_shader_source, fragment_shader_source, mesh);
+        time_ = 0;
+        speed_ = speed;
+        transform_ = Matrix4f::Identity();
+    }
+
+    void Render() {
+        const float angle = time_ * speed_;
+        transform_.topLeftCorner(3, 3) = AngleAxisf(angle, Vector3f::UnitY()).toRotationMatrix();
+        renderer_->SetModelView(transform_);
+        renderer_->Render();
+        time_ += 1;
+    }
+  private:
+    std::unique_ptr<MeshRender> renderer_;
+    size_t time_;
+    float speed_;
+    Matrix4f transform_;
+};
 
 void Run() {
     GlfwWindow window;
     Window::WindowOptions opts;
-    opts.height = 1024;
-    opts.width = 1024;
-    opts.title = "Hello Transformation!";
+    opts.height = 512;
+    opts.width = 512;
+    opts.title = "Hello Geometry!";
     CHECK(window.Create(opts).ok());
 
-    ShaderProgram shader;
-    CHECK(shader.AttachShaders(kVertexShaderSource, kFragmentShaderSource).ok());
-
-    TexturedMesh mesh;
+    ColoredMesh mesh;
     mesh.positions = kPositions;
-    mesh.texcoords = kTexCoords;
+    mesh.colors = kColors;
     mesh.indices = kIndices;
-
-    const std::string texture_file = "/Users/zhangliangkai/devel/study/learn_opengl/data/pattern.png";
-    Texture texture(texture_file);
-    TextureRender renderer;
-    CHECK(renderer.Init(shader, mesh, texture).ok());
-
-    //
-    window.SetOnRenderCallback([&]() { return renderer.Render(); });
+    auto renderer_helper = RenderHelper();
+    renderer_helper.Init(kVertexShaderSource, kFragmentShaderSource, mesh, 0.01);
+    window.SetOnRenderCallback([&]() { return renderer_helper.Render(); });
     window.Run();
 }
 
@@ -77,6 +100,5 @@ void Run() {
 
 int main() {
     ogl::Run();
-    // LOG(INFO) << glGetString(GL_VERSION);
     return 0;
 }

@@ -13,6 +13,14 @@ std::unique_ptr<MeshRender> MeshRender::Create(
     return render_ptr;
 }
 
+void MeshRender::SetProjection(const Eigen::Matrix4f& projection) {
+    program_.SetUniform("projection", projection);
+}
+
+void MeshRender::SetModelView(const Eigen::Matrix4f model_view) {
+    program_.SetUniform("model_view", model_view);
+}
+
 absl::Status MeshRender::Init(
         const std::string& vertex_shader_source,
         const std::string& fragment_shader_source,

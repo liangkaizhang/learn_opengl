@@ -68,4 +68,10 @@ GLuint ShaderProgram::GetAttribLocation(const std::string& attribute_name) const
     return glGetAttribLocation(program_, attribute_name.c_str());
 }
 
+void ShaderProgram::SetUniform(const std::string& name, const Eigen::Matrix4f value) const {
+    this->Use();
+    const GLuint id = glGetUniformLocation(program_, name.c_str());
+    glUniformMatrix4fv(id, 1, GL_FALSE, value.data());
+}
+
 }  // namespace ogl

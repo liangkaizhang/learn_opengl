@@ -7,6 +7,8 @@
 #include <absl/status/status.h>
 #include <glog/logging.h>
 
+#include "Eigen/Dense"
+
 namespace ogl {
 
 class Shader {
@@ -35,6 +37,7 @@ class ShaderProgram {
       const std::string& fragment_shader_source);
     void Use() const;
     GLuint GetAttribLocation(const std::string& attribute_name) const;
+    void SetUniform(const std::string& name, const Eigen::Matrix4f value) const;
   private:
     GLuint program_ ;
 };
