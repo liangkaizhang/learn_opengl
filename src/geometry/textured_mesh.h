@@ -1,5 +1,5 @@
-#ifndef RENDERER_TEXTURED_MESH_H_
-#define RENDERER_TEXTURED_MESH_H_
+#ifndef GEOMETRY_TEXTURED_MESH_H_
+#define GEOMETRY_TEXTURED_MESH_H_
 
 #include <cstdint>
 #include <string>
@@ -19,4 +19,4 @@ struct TexturedMesh {
 
 }  // namespace ogl
 
-#endif  // RENDERER_TEXTURED_MESH_H_
+#endif  // GEOMETRY_TEXTURED_MESH_H_

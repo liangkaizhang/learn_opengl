@@ -11,18 +11,31 @@ namespace ogl {
 
 class Shader {
   public:
-    Shader() = default;
+    enum Type {
+      Vertex = GL_VERTEX_SHADER,
+      Fragment = GL_FRAGMENT_SHADER,
+    };
+
+    explicit Shader(const Type type);
     ~Shader();
 
-    absl::Status Compile(const std::string& vertex_shader_source,
-                         const std::string& fragment_shader_source);
-    GLuint Program() const { return program_;};
+    absl::Status  Compile(const std::string& shader_source);
+    GLuint Id() const;
+  private:
+    GLuint id_;
+};
+
+class ShaderProgram {
+  public:
+    ShaderProgram();
+    ~ShaderProgram();
+
+    absl::Status AttachShaders(
+      const std::string& vertex_shader_source,
+      const std::string& fragment_shader_source);
+    void Use() const;
     GLuint GetAttributeLocation(const std::string& attribute_name) const;
   private:
-    absl::Status CompileShader(const GLuint shader_id,
-                               const std::string& shader_source) const;
-    absl::Status LinkShaders(const GLuint vertex_shader,
-                             const GLuint fragment_shader);
     GLuint program_ ;
 };
 

@@ -13,7 +13,7 @@ namespace ogl {
 
 class TextureRender : public AbstractRenderer {
   public:
-    absl::Status Init(const Shader& shader, const TexturedMesh& mesh, const Texture& texture);
+    absl::Status Init(const ShaderProgram& program, const TexturedMesh& mesh, const Texture& texture);
     void Render() const final;
   private:
     GLuint texture_;

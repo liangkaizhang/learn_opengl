@@ -26,18 +26,11 @@ const std::string kFragmentShaderSource = "#version 330 core\n"
     "}\n\0";
 
 const std::vector<float> kPositions = {
-     0.5f, -0.5f, 0.0f,  // bottom right
     -0.5f, -0.5f, 0.0f,  // bottom left
-     0.5f,  0.5f, 0.0f,  // top  right
+     0.5f, -0.5f, 0.0f,  // bottom right
     -0.5f,  0.5f, 0.0f,  // top  left 
+     0.5f,  0.5f, 0.0f,  // top  right
 };
-
-// const std::vector<float> kPositions = {
-//      1.0f, -1.0f, 0.0f,  // bottom right
-//     -1.0f, -1.0f, 0.0f,  // bottom left
-//      1.0f,  1.0f, 0.0f,  // top  right
-//     -1.0f,  1.0f, 0.0f,  // top  left 
-// };
 
 const std::vector<float> kColors = {
     1.0f, 0.0f, 0.0f,  // red 
@@ -47,7 +40,8 @@ const std::vector<float> kColors = {
 };
 
 const std::vector<uint32_t> kIndices = {
-    3, 1, 2, 0,
+    0, 2, 1,
+    1, 2, 3,
 };
 
 
@@ -59,18 +53,15 @@ void Run() {
     opts.title = "Hello Geometry!";
     CHECK(window.Create(opts).ok());
 
-    Shader shader;
-    CHECK(shader.Compile(kVertexShaderSource, kFragmentShaderSource).ok());
-
     ColoredMesh mesh;
     mesh.positions = kPositions;
     mesh.colors = kColors;
     mesh.indices = kIndices;
-    MeshRender renderer;
-    CHECK(renderer.Init(shader, mesh).ok());
+    const std::unique_ptr<MeshRender> renderer =
+        MeshRender::Create(kVertexShaderSource, kFragmentShaderSource, mesh);
+    if (renderer.get() == nullptr) return;
 
-    //
-    window.SetOnRenderCallback([&]() { return renderer.Render(); });
+    window.SetOnRenderCallback([&]() { return renderer->Render(); });
     window.Run();
 }
 
@@ -78,6 +69,5 @@ void Run() {
 
 int main() {
     ogl::Run();
-    // LOG(INFO) << glGetString(GL_VERSION);
     return 0;
 }

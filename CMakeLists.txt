@@ -42,7 +42,7 @@ include_directories (${INCLUDE_DIRS})
 
 add_subdirectory (src)
 
-set (EXTRA_LIBS ${EXTRA_LIBS} libwindow librenderer)
+set (EXTRA_LIBS ${EXTRA_LIBS} renderer window)
 
 # 01_create_window binary.
 set (BINARY 01_create_window)
@@ -54,7 +54,12 @@ set (BINARY 02_draw_geometry)
 add_executable( ${BINARY} ./samples/${BINARY}/main.cc)
 target_link_libraries (${BINARY} PUBLIC ${LIBS} ${EXTRA_LIBS})
 
-# 03_draw_texture binary.
-set (BINARY 03_draw_texture)
-add_executable( ${BINARY} ./samples/${BINARY}/main.cc)
-target_link_libraries (${BINARY} PUBLIC ${LIBS} ${EXTRA_LIBS})
+# # 03_draw_texture binary.
+# set (BINARY 03_draw_texture)
+# add_executable( ${BINARY} ./samples/${BINARY}/main.cc)
+# target_link_libraries (${BINARY} PUBLIC ${LIBS} ${EXTRA_LIBS})
+
+# # 04_draw_transformation binary.
+# set (BINARY 04_draw_transformation)
+# add_executable( ${BINARY} ./samples/${BINARY}/main.cc)
+# target_link_libraries (${BINARY} PUBLIC ${LIBS} ${EXTRA_LIBS})

@@ -2,7 +2,7 @@
 
 namespace ogl {
 
-absl::Status TextureRender::Init(const Shader& shader, const TexturedMesh& mesh, const Texture& texture) {
+absl::Status TextureRender::Init(const ShaderProgram& shader, const TexturedMesh& mesh, const Texture& texture) {
     // Init buffers.
     glGenVertexArrays(1, &vao_);
     glGenBuffers(1, &vbo_);

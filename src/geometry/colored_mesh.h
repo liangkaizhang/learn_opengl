@@ -1,5 +1,5 @@
-#ifndef RENDERER_COLORED_MESH_H_
-#define RENDERER_COLORED_MESH_H_
+#ifndef GEOMETRY_COLORED_MESH_H_
+#define GEOMETRY_COLORED_MESH_H_
 
 #include <cstdint>
 #include <string>
@@ -19,4 +19,4 @@ struct ColoredMesh {
 
 }  // namespace ogl
 
-#endif  // RENDERER_COLORED_MESH_H_
+#endif  // GEOMETRY_COLORED_MESH_H_

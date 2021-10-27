@@ -2,40 +2,39 @@
 
 namespace ogl {
 
-absl::Status MeshRender::Init(const Shader& shader, const ColoredMesh& mesh) {
-    // Init buffers.
-    glGenVertexArrays(1, &vao_);
-    glGenBuffers(1, &vbo_);
-    glGenBuffers(1, &ebo_);
-    glBindVertexArray(vao_);
+std::unique_ptr<MeshRender> MeshRender::Create(
+        const std::string& vertex_shader_source,
+        const std::string& fragment_shader_source,
+        const ColoredMesh& mesh) {
+    auto render_ptr = absl::make_unique<MeshRender>();
+    const auto status = render_ptr->Init(vertex_shader_source,
+                                         fragment_shader_source, mesh);
+    if (!status.ok()) render_ptr.reset(nullptr);
+    return render_ptr;
+}
 
-    // Buffer position and color data.
-    const GLuint positions_size = mesh.positions.size() * sizeof(float);
-    const GLuint colors_size = mesh.colors.size() * sizeof(float);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    glBufferData(GL_ARRAY_BUFFER, positions_size + colors_size, NULL, GL_STATIC_DRAW);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, positions_size, &(mesh.positions[0]));
-    glBufferSubData(GL_ARRAY_BUFFER, positions_size, colors_size, &(mesh.colors[0]));
-    // Position attribute.
-    const GLuint position_loc = shader.GetAttributeLocation("a_position");
-    glEnableVertexAttribArray(position_loc);
-    glVertexAttribPointer(position_loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
-    // Color attribute.
-    const GLuint color_loc = shader.GetAttributeLocation("a_color");
-    glEnableVertexAttribArray(color_loc);
-    glVertexAttribPointer(color_loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
-                          reinterpret_cast<void*>(positions_size));
-    // Bind EBO.
-    num_indices_ = mesh.indices.size();
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, num_indices_ * sizeof(uint32_t), &(mesh.indices[0]), GL_STATIC_DRAW);
-
-    // Unbind buffers.
-    glBindBuffer(GL_ARRAY_BUFFER, 0); 
-    glBindVertexArray(0); 
-
+absl::Status MeshRender::Init(
+        const std::string& vertex_shader_source,
+        const std::string& fragment_shader_source,
+        const ColoredMesh& mesh) {
     // Set shader program.
-    program_ = shader.Program();
+    program_.AttachShaders(vertex_shader_source, fragment_shader_source);
+
+    vao_.Bind();
+    // // Buffer position data.
+    auto& position_buffer = array_buffers_["a_position"];
+    position_buffer.BufferData(GL_FLOAT, GL_STATIC_DRAW, 3,
+                               mesh.positions.size(),
+                               &(mesh.positions[0]));
+    // // Buffer color data.
+    auto& color_buffer = array_buffers_["a_color"];
+    color_buffer.BufferData(GL_FLOAT, GL_STATIC_DRAW, 3,
+                            mesh.colors.size(),
+                            &(mesh.colors[0]));
+    // Buffer index data.
+    index_buffer_.BufferData(GL_UNSIGNED_INT, GL_STATIC_DRAW,
+                             mesh.indices.size(), &(mesh.indices[0]));
+    vao_.Unbind();
     return absl::OkStatus();
 }
 

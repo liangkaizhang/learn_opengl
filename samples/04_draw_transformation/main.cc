@@ -11,9 +11,10 @@ const std::string kVertexShaderSource ="#version 330 core\n"
     "layout (location = 0) in vec3 a_position;\n"
     "layout (location = 1) in vec3 a_texcoord;\n"
     "out vec2 texcoord;\n"
+    "uniform mat4 mvp;\n"
     "void main()\n"
     "{\n"
-    "   gl_Position = vec4(a_position, 1.0);\n"
+    "   gl_Position = mvp * vec4(a_position, 1.0);\n"
     "   texcoord = vec2(a_texcoord.x, 1 - a_texcoord.y);\n"
     "}\0";
 
@@ -49,9 +50,9 @@ const std::vector<uint32_t> kIndices = {
 void Run() {
     GlfwWindow window;
     Window::WindowOptions opts;
-    opts.height = 1600 / 4;
-    opts.width = 2880 / 4;
-    opts.title = "Hello Texture!";
+    opts.height = 1024;
+    opts.width = 1024;
+    opts.title = "Hello Transformation!";
     CHECK(window.Create(opts).ok());
 
     ShaderProgram shader;
@@ -76,5 +77,6 @@ void Run() {
 
 int main() {
     ogl::Run();
+    // LOG(INFO) << glGetString(GL_VERSION);
     return 0;
 }

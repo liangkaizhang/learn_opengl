@@ -6,13 +6,20 @@
 
 #include "renderer/abstract_renderer.h"
 #include "geometry/colored_mesh.h"
-#include "gl/shader.h"
 
 namespace ogl {
 
 class MeshRender : public AbstractRenderer {
   public:
-    absl::Status Init(const Shader& shader, const ColoredMesh& mesh);
+    static std::unique_ptr<MeshRender> Create(
+        const std::string& vertex_shader_source,
+        const std::string& fragment_shader_source,
+        const ColoredMesh& mesh);
+  private:
+    absl::Status Init(
+        const std::string& vertex_shader_source,
+        const std::string& fragment_shader_source,
+        const ColoredMesh& mesh);
 };
 
 }  // namespace ogl
