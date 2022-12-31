@@ -17,8 +17,8 @@
 
 namespace ogl {
 namespace {
-constexpr size_t kWidth = 1080;
-constexpr size_t kHeight = 720;
+constexpr size_t kWidth = 640;
+constexpr size_t kHeight = 640;
 
 const std::string kVertexShaderSource =
     "#version 330 core\n"
