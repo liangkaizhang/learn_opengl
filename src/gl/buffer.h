@@ -2,45 +2,68 @@
 #define GL_BUFFER_H_
 
 #include <GL/glew.h> 
-#include <glog/logging.h>
+#include <absl/status/statusor.h>
 
 #include "gl/abstract_object.h"
 
 namespace ogl {
 
-class ArrayBuffer : public AbstractObject {
+class AttributeBuffer : public AbstractObject {
   public:
-    ArrayBuffer() = default;
-    ~ArrayBuffer() override;
+    using Ptr = std::unique_ptr<AttributeBuffer>;
 
+    ~AttributeBuffer() override;
+
+    void Bind() const;
+    void UnBind() const;
+
+    void Enable(const GLuint attrib_location) const;
+
+    size_t NumVertices() const {
+      return num_of_vertice_;
+    }
+
+    static absl::StatusOr<Ptr> Create(
+        GLenum data_type, GLenum usage,
+        size_t element_size,
+        size_t data_length,
+        const void* data);
+
+  private:
+    AttributeBuffer() = default;
     void BufferData(GLenum data_type, GLenum usage,
-                    size_t elements_per_vertex,
+                    size_t element_size,
                     size_t data_length, const void* data);  
 
-    void Bind() const override;
-    void Unbind() const override;
-
-    void Enable(GLuint attrib_location) const;
-  private:
     GLenum data_type_;
     GLenum usage_;
-    size_t elements_per_vertex_;
-    size_t num_of_vertex_;
+    size_t element_size_;
+    size_t num_of_vertice_;
 };
 
-class IndexBuffer : public AbstractObject {
+class ElementBuffer : public AbstractObject {
   public:
-    IndexBuffer() = default;
-    ~IndexBuffer() override;
+    using Ptr = std::unique_ptr<ElementBuffer>;
 
-    void BufferData(GLenum data_type, GLenum usage,
-                    size_t data_length, const void* data);  
+    ~ElementBuffer() override;
 
-    void Bind() const override;
-    void Unbind() const override;
+    void Bind() const;
+    void UnBind() const;
 
-    void Draw() const;
+    size_t NumIndice() const {
+      return num_of_index_;
+    }
+  
+    static absl::StatusOr<Ptr> Create(
+        GLenum usage,
+        size_t data_length,
+        const void* data);
+
   private:
+    ElementBuffer() = default;
+    void BufferData(GLenum data_type, GLenum usage,
+                    size_t data_length, const void* data);
+
     GLenum data_type_;
     GLenum usage_;
     size_t num_of_index_;

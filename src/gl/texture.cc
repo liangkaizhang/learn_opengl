@@ -2,27 +2,61 @@
 #define RENDERER_TEXTURE_H_
 
 #include "gl/texture.h"
-
-#include "opencv2/opencv.hpp"
+#include "utils/utils.h"
 
 namespace ogl {
 
-Texture::Texture(const std::string& filename) {
-    // load and create a texture 
-    glGenTextures(1, &texture_);
-    glBindTexture(GL_TEXTURE_2D, texture_); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+Texture::~Texture() {
+    glDeleteTextures(1, &id_);
+}
+
+absl::Status Texture::BufferData(size_t width,
+                                 size_t height,
+                                 void* data) {
+    width_ = width;
+    height_ = height;
+    this->Bind();
+    glTexImage2D(GL_TEXTURE_2D, 0,
+                 GL_RGB,
+                 width_, height_, 0,
+                 options_.format, options_.type,
+                 data);
+    this->UnBind(); 
+    return absl::OkStatus();
+}
+
+// absl::Status Texture::GenerateMipmap() const {
+//     this->Bind();
+//     glGenerateMipmap(GL_TEXTURE_2D);
+//     this->UnBind(); 
+//     return absl::OkStatus();
+// }
+
+void Texture::Bind() const {
+    glBindTexture(GL_TEXTURE_2D, id_);
+}
+
+void Texture::UnBind() const {
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+absl::Status Texture::Setup() {
+    glGenTextures(1, &id_);
+    this->Bind();
     // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, options_.wrap_s);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, options_.wrap_t);
     // set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // Load image file.
-    const auto image = cv::imread(filename);
-    const size_t width = image.size().width;
-    const size_t height = image.size().height; 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, image.ptr());
-    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, options_.min_filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, options_.mag_filter);
+    this->UnBind();
+    return absl::OkStatus();
+}
+
+absl::StatusOr<Texture::Ptr> Texture::Create(const Options& options) {
+    auto texture = Ptr(new Texture {options});
+    RETURN_IF_ERROR(texture->Setup());
+    return texture;
 }
 
 }  // namespace ogl

@@ -1,45 +1,36 @@
 #ifndef GL_SHADER_H_
 #define GL_SHADER_H_
 
+#include <memory>
 #include <string>
 
-#include <GL/glew.h> 
 #include <absl/status/status.h>
-#include <glog/logging.h>
+#include <absl/status/statusor.h>
+#include <GL/glew.h> 
 
-#include "Eigen/Dense"
+#include "gl/abstract_object.h"
 
 namespace ogl {
 
-class Shader {
+class Shader : public AbstractObject {
   public:
-    enum Type {
-      Vertex = GL_VERTEX_SHADER,
-      Fragment = GL_FRAGMENT_SHADER,
+    using Ptr = std::unique_ptr<Shader>;
+
+    enum ShaderType {
+      VertexShader = GL_VERTEX_SHADER,
+      FragmentShader = GL_FRAGMENT_SHADER,
     };
 
-    explicit Shader(const Type type);
-    ~Shader();
+    ~Shader() override;
 
-    absl::Status  Compile(const std::string& shader_source);
-    GLuint Id() const;
+    static absl::StatusOr<Ptr> Create(
+        const std::string& shader_source,
+        const Shader::ShaderType type);
+
   private:
-    GLuint id_;
-};
-
-class ShaderProgram {
-  public:
-    ShaderProgram();
-    ~ShaderProgram();
-
-    absl::Status AttachShaders(
-      const std::string& vertex_shader_source,
-      const std::string& fragment_shader_source);
-    void Use() const;
-    GLuint GetAttribLocation(const std::string& attribute_name) const;
-    void SetUniform(const std::string& name, const Eigen::Matrix4f value) const;
-  private:
-    GLuint program_ ;
+    Shader() noexcept = default;
+    absl::Status Setup(const std::string& shader_source,
+                       const ShaderType type);
 };
 
 }  // namespace ogl

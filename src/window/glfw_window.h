@@ -8,25 +8,30 @@
 #include <GL/glew.h> 
 #include <GLFW/glfw3.h>
 #include <absl/status/status.h>
+#include <absl/status/statusor.h>
 #include <glog/logging.h>
 
 namespace ogl {
 
+// Window class implemention interms of GLFW.
 class GlfwWindow : public Window {
   public:
+    GlfwWindow() : window_(nullptr) {};
     ~GlfwWindow() override;
 
-    absl::Status Create(const WindowOptions& opts) override;
+    absl::Status Setup(const WindowOptions& options) override;
 
-    void Run() override;
+    bool ShouldClose() const override;
 
-    bool RunOnce() override;
-
-    void Close() override;
+    void OnBeforeRender() const override;
+    void OnAfterRender() const override;
 
   private:
-    GLFWwindow* window_ = nullptr;
+    GLFWwindow* window_;
 };
+
+absl::StatusOr<std::unique_ptr<Window>>
+createGlfwWindow(const Window::WindowOptions& options);
 
 }  // namespace ogl
 

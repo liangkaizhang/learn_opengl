@@ -1,10 +1,12 @@
 #include "gl/vertex_array.h"
 
-namespace ogl {
+#include <glog/logging.h>
+#include <absl/status/status.h>
+#include <absl/status/statusor.h>
 
-VertexArray::VertexArray() {
-    glGenVertexArrays(1, &id_);
-}
+#include "utils/utils.h"
+
+namespace ogl {
 
 VertexArray::~VertexArray() {
     glDeleteVertexArrays(1, &id_);
@@ -14,8 +16,19 @@ void VertexArray::Bind() const {
     glBindVertexArray(id_);
 }
 
-void VertexArray::Unbind() const {
+void VertexArray::UnBind() const {
     glBindVertexArray(0);
+}
+
+absl::Status VertexArray::Setup() {
+    glGenVertexArrays(1, &id_);
+    return absl::OkStatus();
+}
+
+absl::StatusOr<VertexArray::Ptr> VertexArray::Create() {
+  auto vao = Ptr(new VertexArray);
+  RETURN_IF_ERROR(vao->Setup());
+  return vao;
 }
 
 }  // namespace ogl

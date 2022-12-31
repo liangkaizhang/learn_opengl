@@ -1,24 +1,27 @@
 #ifndef GL_ABSTRACT_OBJECT_H_
 #define GL_ABSTRACT_OBJECT_H_
 
+#include <limits>
+
 #include <GL/glew.h> 
 
 namespace ogl {
 
+constexpr GLuint kInvalidId = std::numeric_limits<GLuint>::max();
+
 class AbstractObject {
   public:
-    AbstractObject() = default;
+    AbstractObject() : id_(kInvalidId) {};
     virtual ~AbstractObject() = default;
 
-    virtual void Bind() const = 0;
-    virtual void Unbind() const = 0;
+    AbstractObject(const AbstractObject&) = delete;
+    AbstractObject & operator=(const AbstractObject&) = delete;
 
     GLuint Id() const { return id_; };
+
   protected:
     GLuint id_;
-    bool is_generated_ = false;
 };
-
 
 }  // namespace ogl
 

@@ -1,6 +1,7 @@
 #ifndef WINDOW_WINDOW_H_
 #define WINDOW_WINDOW_H_
 
+#include <memory>
 #include <string>
 #include <functional>
 
@@ -8,41 +9,32 @@
 
 namespace ogl {
 
-using RenderCallback = std::function<void()>;
-
+// Define abstract interface class for window.
 class Window {
   public:
-    Window() = default;
-    virtual ~Window() = default;
-
     struct WindowOptions {
         int width;
         int height;
         std::string title;
     };
 
-    virtual absl::Status Create(const WindowOptions& opts) = 0;
+    Window() = default;
+    virtual ~Window() = default;
 
-    virtual void Run() = 0;
+    virtual absl::Status Setup(const WindowOptions& options) = 0;
 
-    virtual bool RunOnce() = 0;
+    virtual bool ShouldClose() const = 0;
 
-    int Width() const { return  width_; }
-    int Height() const { return height_; }
+    virtual void OnBeforeRender() const = 0;
+    virtual void OnAfterRender() const = 0;
 
-    void SetSize(int width, int height);
-
-    void SetOnRenderCallback(const RenderCallback& on_render);
-
-    virtual void Close() {}
+    virtual int Width() const { return  width_; }
+    virtual int Height() const { return height_; }
 
   protected:
-    int width_ = 0;
-    int height_ = 0;
-    RenderCallback on_render_;
+    int width_;
+    int height_;
 };
-
-std::unique_ptr<Window> GetWindow();
 
 }  // namespace ogl
 
