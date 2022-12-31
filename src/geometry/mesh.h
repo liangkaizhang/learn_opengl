@@ -1,5 +1,5 @@
-#ifndef GEOMETRY_DISTORTION_MESH_H_
-#define GEOMETRY_DISTORTION_MESH_H_
+#ifndef GEOMETRY_MESH_H_
+#define GEOMETRY_MESH_H_
 
 #include <cstdint>
 #include <string>
@@ -34,4 +34,4 @@ class Mesh : public Object3d {
 
 }  // namespace ogl
 
-#endif  // GEOMETRY_DISTORTION_MESH_H_
+#endif  // GEOMETRY_MESH_H_

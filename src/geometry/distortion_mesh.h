@@ -1,5 +1,5 @@
-#ifndef GEOMETRY_MESH_H_
-#define GEOMETRY_MESH_H_
+#ifndef GEOMETRY_DISTORTION_MESH_H_
+#define GEOMETRY_DISTORTION_MESH_H_
 
 #include <cstdint>
 #include <string>
@@ -22,7 +22,9 @@ class DistortionMesh : public Mesh {
 
     ~DistortionMesh() = default;
 
-    static absl::StatusOr<Object3d::Ptr> Create(const DistortParams& params, Program::Ptr program);
+    static absl::StatusOr<Object3d::Ptr> Create(
+        float size_x, float size_y, size_t divisions_x, size_t divisions_y,
+        const DistortParams& params, Program::Ptr program);
 
   private:
     DistortionMesh(BufferGeometry::Ptr geometry, Program::Ptr program) :
@@ -31,4 +33,4 @@ class DistortionMesh : public Mesh {
 
 }  // namespace ogl
 
-#endif  // GEOMETRY_MESH_H_
+#endif  // GEOMETRY_DISTORTION_MESH_H_
