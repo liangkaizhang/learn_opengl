@@ -9,28 +9,21 @@
 #include <absl/status/statusOr.h>
 
 #include "geometry/camera.h"
-#include "geometry/object3d.h"
+#include "geometry/mesh.h"
 #include "gl/program.h"
 #include "gl/texture.h"
 
 namespace ogl {
 
-class Quad : public Object3d {
+class Quad : public Mesh {
   public:
     ~Quad() = default;
 
-    absl::Status Draw(const Camera& camera) const override;
-    absl::Status Draw() const override;
-
     static absl::StatusOr<Object3d::Ptr> Create(float size_x, float size_y,
                                                 Program::Ptr program);
-
   private:
     Quad(BufferGeometry::Ptr geometry, Program::Ptr program) :
-        geometry_(std::move(geometry)), program_(program), Object3d() {};
-
-    BufferGeometry::Ptr geometry_;
-    Program::Ptr program_;
+          Mesh(std::move(geometry), program) {};
 };
 
 }  // namespace ogl

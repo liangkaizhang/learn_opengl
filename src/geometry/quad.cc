@@ -40,19 +40,6 @@ std::vector<float> CreateQuad(float size_x, float size_y) {
 
 } // namespace
 
-absl::Status Quad::Draw(const Camera& camera) const {
-    this->Draw();
-    return absl::OkStatus();
-}
-
-absl::Status Quad::Draw() const {
-    geometry_->Enable();
-    program_->Use();
-    glDrawElements(GL_TRIANGLES, geometry_->NumIndice(), GL_UNSIGNED_INT, 0);
-    geometry_->Disable();
-    return absl::OkStatus();
-}
-
 absl::StatusOr<Object3d::Ptr> Quad::Create(float size_x, float size_y,
                                            Program::Ptr program) {
     const auto positions = CreateQuad(size_x, size_y);

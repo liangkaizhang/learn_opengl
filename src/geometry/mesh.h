@@ -1,5 +1,5 @@
-#ifndef GEOMETRY_MESH_H_
-#define GEOMETRY_MESH_H_
+#ifndef GEOMETRY_DISTORTION_MESH_H_
+#define GEOMETRY_DISTORTION_MESH_H_
 
 #include <cstdint>
 #include <string>
@@ -23,14 +23,15 @@ class Mesh : public Object3d {
 
     static absl::StatusOr<Object3d::Ptr> Create(BufferGeometry::Ptr geometry,Program::Ptr program);
 
-  private:
+  protected:
     Mesh(BufferGeometry::Ptr geometry, Program::Ptr program) :
-        geometry_(std::move(geometry)), program_(program), Object3d() {};
+      geometry_(std::move(geometry)), program_(program), Object3d() {};
 
+  private:
     BufferGeometry::Ptr geometry_;
     Program::Ptr program_;
 };
 
 }  // namespace ogl
 
-#endif  // GEOMETRY_MESH_H_
+#endif  // GEOMETRY_DISTORTION_MESH_H_
