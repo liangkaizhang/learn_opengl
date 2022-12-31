@@ -20,7 +20,7 @@
 
 namespace ogl {
 namespace {
-constexpr size_t kWidth = 1080;
+constexpr size_t kWidth = 720;
 constexpr size_t kHeight = 720;
 
 const std::string kVertexShaderSource =
@@ -59,7 +59,7 @@ const std::string kQuadVertexShaderSource =
     "out vec2 uv;\n"
     "void main()\n"
     "{\n"
-    "   uv = vec2(texcoord.x, texcoord.y);\n"
+    "   uv = vec2(texcoord.x, 1.0 - texcoord.y);\n"
     "   gl_Position = vec4(position, 1.0);\n"
     "}\0";
 
@@ -68,9 +68,31 @@ const std::string kQuadFragmentShaderSource =
     "out vec4 frag_color;\n"
     "in vec2 uv;\n"
     "uniform sampler2D texture0;\n"
+    "const float offset = 1.0 / 720.0;\n"
     "void main()\n"
     "{\n"
-    "   vec4 color = texture(texture0, vec2(uv.x, 1.0 - uv.y));\n"
+    "   vec2 offsets[9] = vec2[](\n"
+    "       vec2(-offset,  offset), // top-left \n"
+    "       vec2( 0.0f,    offset), // top-center \n"
+    "       vec2( offset,  offset), // top-right \n"
+    "       vec2(-offset,  0.0f),   // center-left \n"
+    "       vec2( 0.0f,    0.0f),   // center-center \n"
+    "       vec2( offset,  0.0f),   // center-right \n"
+    "       vec2(-offset, -offset), // bottom-left \n"
+    "       vec2( 0.0f,   -offset), // bottom-center \n"
+    "       vec2( offset, -offset)  // bottom-right   \n"
+    "   );\n"
+    "\n"
+    "   float kernel[9] = float[]( \n"
+    "       -1, -1, -1,  \n"
+    "        -1,  9, -1,  \n"
+    "       -1, -1, -1  \n"
+    "   ); \n"
+    "   vec4 color = vec4(0.0);\n"
+    "   for (int i = 0; i < 9; ++i) {\n"
+    "       vec2 sample_loc = uv.st + offsets[i];\n"
+    "       color += texture(texture0, sample_loc) * kernel[i];\n"
+    "   }\n"
     "   frag_color = vec4(color.rgb, 1.0);\n"
     "}\n\0";
 
