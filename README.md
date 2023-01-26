@@ -1,4 +1,4 @@
-# learn_opengl
+# OpenGL Renderer
 
 ## Draw Geometry
 
